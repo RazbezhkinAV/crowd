@@ -9,13 +9,12 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.validator.EmailValidator;
-import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import ru.razbezhkin.crowd.dto.EmployeeDto;
-import ru.razbezhkin.crowd.exception.EmployeeException;
+import ru.razbezhkin.crowd.exception.EntityNotFoundException;
 import ru.razbezhkin.crowd.service.EmployeeService;
 import ru.razbezhkin.crowd.ui.validator.PhoneNumberValidator;
 
@@ -28,6 +27,7 @@ import java.util.Locale;
 public class EmployeeEditor extends VerticalLayout implements KeyNotifier {
 
     private final EmployeeService employeeService;
+    private final ErrorMessageLayout errorMessageLayout;
 
     private final TextField login = new TextField("Login");
     private final TextField firstName = new TextField("First name");
@@ -52,10 +52,11 @@ public class EmployeeEditor extends VerticalLayout implements KeyNotifier {
         setSpacing(true);
         setVisible(false);
 
-        configureLoginField();
+        login.setVisible(false);
         configureBinder();
 
         add(login,
+            errorMessageLayout,
             firstName,
             lastName,
             phoneNumber,
@@ -105,52 +106,29 @@ public class EmployeeEditor extends VerticalLayout implements KeyNotifier {
     }
 
     private void save() {
+        loginGenerator(firstName.getValue(), lastName.getValue());
         if (isLoginFree()) {
             employeeService.saveEmployee(employee);
             changeHandler.onChange();
         } else {
-            login.setReadOnly(false);
-            login.setErrorMessage("This login is busy, please replace it");
+            login.setVisible(true);
         }
     }
 
     private boolean isLoginFree() {
         try {
             employeeService.getEmployeeByLogin(login.getValue());
+            errorMessageLayout.setText("This login is busy, please replace it");
             return false;
-        } catch (EmployeeException exception) {
+        } catch (EntityNotFoundException exception) {
+            errorMessageLayout.setText("");
             return true;
         }
     }
 
-    private void configureLoginField() {
-        login.setReadOnly(true);
-
-        firstName.setValueChangeMode(ValueChangeMode.LAZY);
-        firstName.addValueChangeListener(value -> {
-            if (value.getValue().isEmpty()) {
-                login.clear();
-            } else {
-                char firstChar = value.getValue().toLowerCase(Locale.ROOT).charAt(0);
-                login.setValue(firstChar + ".");
-            }
-        });
-
-        lastName.setValueChangeMode(ValueChangeMode.LAZY);
-        lastName.addValueChangeListener(value -> {
-            if (!value.getValue().isEmpty()) {
-                String lowerLastName = value.getValue().toLowerCase(Locale.ROOT);
-                String currentLogin = login.getValue();
-                String[] split = currentLogin.split("\\.");
-                if (split.length > 1) {
-                    login.setValue(split[0] + "." + lowerLastName);
-                } else {
-                    login.setValue(currentLogin + lowerLastName);
-                }
-            }
-        });
+    private void loginGenerator(String firstName, String lastName) {
+        login.setValue(firstName.toLowerCase(Locale.ROOT).charAt(0) + "." + lastName.toLowerCase(Locale.ROOT));
     }
-
 
     public void edit(EmployeeDto newEmp) {
         if (newEmp == null) {
@@ -181,7 +159,7 @@ public class EmployeeEditor extends VerticalLayout implements KeyNotifier {
     private void setEmployee(EmployeeDto employeeDto) {
         try {
             employee = employeeService.getEmployeeByLogin(employeeDto.getLogin());
-        } catch (EmployeeException exc) {
+        } catch (EntityNotFoundException exc) {
             employee = employeeDto;
         }
     }

@@ -67,25 +67,25 @@ public class EmployeeEditor extends VerticalLayout implements KeyNotifier {
         String fieldMustBeSet = "Field must be set";
 
         binder.forField(login)
-                .bind(EmployeeDto::getLogin, EmployeeDto::setLogin);
+            .bind(EmployeeDto::getLogin, EmployeeDto::setLogin);
 
         binder.forField(firstName)
-                .asRequired(fieldMustBeSet)
-                .bind(EmployeeDto::getFirstname, EmployeeDto::setFirstname);
+            .asRequired(fieldMustBeSet)
+            .bind(EmployeeDto::getFirstname, EmployeeDto::setFirstname);
 
         binder.forField(lastName)
-                .asRequired(fieldMustBeSet)
-                .bind(EmployeeDto::getLastname, EmployeeDto::setLastname);
+            .asRequired(fieldMustBeSet)
+            .bind(EmployeeDto::getLastname, EmployeeDto::setLastname);
 
         binder.forField(phoneNumber)
-                .asRequired(fieldMustBeSet)
-                .withValidator(new PhoneNumberValidator("Phone number must be like +7 / 7 (9xx) xxx xx x"))
-                .bind(EmployeeDto::getPhoneNumber, EmployeeDto::setPhoneNumber);
+            .asRequired(fieldMustBeSet)
+            .withValidator(new PhoneNumberValidator("Phone number must be like +7 / 7 (9xx) xxx xx x"))
+            .bind(EmployeeDto::getPhoneNumber, EmployeeDto::setPhoneNumber);
 
         binder.forField(email)
-                .asRequired(fieldMustBeSet)
-                .withValidator(new EmailValidator("Invalid email"))
-                .bind(EmployeeDto::getEmail, EmployeeDto::setEmail);
+            .asRequired(fieldMustBeSet)
+            .withValidator(new EmailValidator("Invalid email"))
+            .bind(EmployeeDto::getEmail, EmployeeDto::setEmail);
     }
 
     private HorizontalLayout createActionLayout() {
@@ -105,10 +105,10 @@ public class EmployeeEditor extends VerticalLayout implements KeyNotifier {
     }
 
     private void save() {
-        if(isLoginFree()) {
+        if (isLoginFree()) {
             employeeService.saveEmployee(employee);
             changeHandler.onChange();
-        }else {
+        } else {
             login.setReadOnly(false);
             login.setErrorMessage("This login is busy, please replace it");
         }
@@ -118,7 +118,7 @@ public class EmployeeEditor extends VerticalLayout implements KeyNotifier {
         try {
             employeeService.getEmployeeByLogin(login.getValue());
             return false;
-        }catch (EmployeeException exception){
+        } catch (EmployeeException exception) {
             return true;
         }
     }
@@ -170,7 +170,7 @@ public class EmployeeEditor extends VerticalLayout implements KeyNotifier {
         binder.setBean(employee);
 
         binder.addValueChangeListener(value ->
-                                              save.setEnabled(binder.isValid())
+                                          save.setEnabled(binder.isValid())
         );
 
         setVisible(true);

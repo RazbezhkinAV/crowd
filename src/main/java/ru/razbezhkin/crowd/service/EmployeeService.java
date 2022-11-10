@@ -8,7 +8,6 @@ import ru.razbezhkin.crowd.exception.EmployeeNotFoundException;
 import ru.razbezhkin.crowd.mapper.CrowdMapper;
 import ru.razbezhkin.crowd.repository.EmployeeRepository;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 
 @Service
@@ -39,6 +38,6 @@ public class EmployeeService {
 
     private Employee findEmployeeByLogin(String login) {
         return employeeRepository.findEmployeeByLogin(login)
-                .orElseThrow(() -> new EmployeeNotFoundException("Employee with " + login + " not found"));
+            .orElseThrow(() -> new EmployeeNotFoundException("Employee with " + login + " not found"));
     }
 }

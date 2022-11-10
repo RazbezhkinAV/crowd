@@ -21,7 +21,7 @@ import javax.annotation.PostConstruct;
 public class MainUI extends HorizontalLayout {
 
     private final EmployeeService employeeService;
-    private final Grid<EmployeeDto> grid = new Grid<>(EmployeeDto.class,false);
+    private final Grid<EmployeeDto> grid = new Grid<>(EmployeeDto.class, false);
     private final TextField filter = new TextField("", "Type to filter");
     private final Button addNewEmpBut = new Button("Add new Employee");
     private final EmployeeEditor employeeEditor;
@@ -60,18 +60,18 @@ public class MainUI extends HorizontalLayout {
         grid.setItems(employeeService.getAllEmployee());
 
         grid.addColumn(EmployeeDto::getLogin)
-                .setHeader("Login");
+            .setHeader("Login");
 
         grid.addColumn(EmployeeDto::getFirstname)
-                .setHeader("First Name");
+            .setHeader("First Name");
 
         grid.addColumn(EmployeeDto::getLastname)
-                .setHeader("Last Name");
+            .setHeader("Last Name");
 
         grid.addColumn(EmployeeDto::getPhoneNumber)
-                .setHeader("Phone Number");
+            .setHeader("Phone Number");
 
         grid.addColumn(EmployeeDto::getEmail)
-                .setHeader("Email");
+            .setHeader("Email");
     }
 }

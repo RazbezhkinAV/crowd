@@ -13,8 +13,8 @@ public final class CrowdMapper {
 
     public static List<EmployeeDto> toEmployeeDtoList(List<Employee> employees) {
         return employees.stream()
-                .map(CrowdMapper::toEmployeeDto)
-                .collect(Collectors.toList());
+            .map(CrowdMapper::toEmployeeDto)
+            .collect(Collectors.toList());
     }
 
     public static EmployeeDto toEmployeeDto(Employee employee) {

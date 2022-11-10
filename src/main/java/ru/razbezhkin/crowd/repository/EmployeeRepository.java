@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     @Query("from Employee e where concat(e.lastname, ' ', e.firstname) like concat('%',:name,'%') ")
-    List<Employee> findByName (@Param("name") String name);
+    List<Employee> findByName(@Param("name") String name);
 
     Optional<Employee> findEmployeeByPhoneNumber(String phoneNumber);
 

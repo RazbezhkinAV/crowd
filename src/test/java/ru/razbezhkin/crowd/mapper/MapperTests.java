@@ -11,22 +11,24 @@ public class MapperTests {
     @Test
     void testEmployeeMapper() {
         Employee employee = new Employee(
-                1L,
-                "a.petrov",
-                "Alex",
-                "Petrov",
-                "petrov@mail.ru",
-                "79996999887");
+            1L,
+            "a.petrov",
+            "Alex",
+            "Petrov",
+            "petrov@mail.ru",
+            "79996999887");
 
         EmployeeDto expectedEmployeeDto = EmployeeDto.builder()
-                .login("a.petrov")
-                .firstname("Alex")
-                .lastname("Petrov")
-                .email("petrov@mail.ru")
-                .phoneNumber("79996999887")
-                .build();
+            .id(1L)
+            .login("a.petrov")
+            .firstname("Alex")
+            .lastname("Petrov")
+            .email("petrov@mail.ru")
+            .phoneNumber("79996999887")
+            .build();
         EmployeeDto actualEmployeeDto = EmployeeMapper.INSTANCE.toEmployeeDto(employee);
 
+        assertEquals(actualEmployeeDto.getId(), expectedEmployeeDto.getId());
         assertEquals(actualEmployeeDto.getLogin(), expectedEmployeeDto.getLogin());
         assertEquals(actualEmployeeDto.getFirstname(), expectedEmployeeDto.getFirstname());
         assertEquals(actualEmployeeDto.getLastname(), expectedEmployeeDto.getLastname());

@@ -1,15 +1,13 @@
-package ru.razbezhkin.crowd.dto;
+package ru.razbezhkin.crowd.dto.request;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-
-@Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class EmployeeDto implements Serializable {
-    private Long id;
+public class RequestEmployeeDto {
     private String login;
     private String firstname;
     private String lastname;

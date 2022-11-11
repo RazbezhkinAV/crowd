@@ -27,9 +27,14 @@ public class ErrorMessageLayout extends HorizontalLayout implements HasText {
             span);
     }
 
+    public boolean isActive() {
+        String text = span.getText();
+        return text != null && !text.isEmpty();
+    }
+
     @Override
     public void setText(String text) {
         span.setText(text);
-        this.setVisible(text != null && !text.isEmpty());
+        this.setVisible(isActive());
     }
 }

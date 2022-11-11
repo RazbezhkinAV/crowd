@@ -52,7 +52,7 @@ public class MainUI extends HorizontalLayout {
         if (name.isEmpty()) {
             grid.setItems(employeeService.getAllEmployee());
         } else {
-            grid.setItems(employeeService.getEmployeesByName(name));
+            grid.setItems(employeeService.getEmployeesByFullNamePredicate(name));
         }
     }
 

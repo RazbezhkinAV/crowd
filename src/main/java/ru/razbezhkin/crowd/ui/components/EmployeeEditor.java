@@ -14,12 +14,13 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import ru.razbezhkin.crowd.dto.EmployeeDto;
-import ru.razbezhkin.crowd.exception.EntityNotFoundException;
+import ru.razbezhkin.crowd.mapper.CrowdMapper;
 import ru.razbezhkin.crowd.service.EmployeeService;
 import ru.razbezhkin.crowd.ui.validator.PhoneNumberValidator;
 
 import javax.annotation.PostConstruct;
 import java.util.Locale;
+import java.util.Objects;
 
 @SpringComponent
 @UIScope
@@ -101,14 +102,16 @@ public class EmployeeEditor extends VerticalLayout implements KeyNotifier {
     }
 
     private void delete() {
-        employeeService.deleteEmployee(employee);
+        employeeService.deleteById(employee.getId());
         changeHandler.onChange();
     }
 
     private void save() {
-        loginGenerator(firstName.getValue(), lastName.getValue());
+        if(!errorMessageLayout.isActive()) {
+            loginGenerator(firstName.getValue(), lastName.getValue());
+        }
         if (isLoginFree()) {
-            employeeService.saveEmployee(employee);
+            employeeService.createEmployee(CrowdMapper.toRequestEmployeeDto(employee));
             changeHandler.onChange();
         } else {
             login.setVisible(true);
@@ -116,11 +119,10 @@ public class EmployeeEditor extends VerticalLayout implements KeyNotifier {
     }
 
     private boolean isLoginFree() {
-        try {
-            employeeService.getEmployeeByLogin(login.getValue());
+        if (employeeService.isExistByLogin(login.getValue())) {
             errorMessageLayout.setText("This login is busy, please replace it");
             return false;
-        } catch (EntityNotFoundException exception) {
+        } else {
             errorMessageLayout.setText("");
             return true;
         }
@@ -137,7 +139,7 @@ public class EmployeeEditor extends VerticalLayout implements KeyNotifier {
         }
 
 
-        final boolean persisted = newEmp.getLogin() != null;
+        final boolean persisted = newEmp.getId() != null;
         if (persisted) {
             setEmployee(newEmp);
         } else {
@@ -147,9 +149,7 @@ public class EmployeeEditor extends VerticalLayout implements KeyNotifier {
         cancel.setVisible(persisted);
         binder.setBean(employee);
 
-        binder.addValueChangeListener(value ->
-                                          save.setEnabled(binder.isValid())
-        );
+        binder.addValueChangeListener(value -> save.setEnabled(binder.isValid()));
 
         setVisible(true);
 
@@ -157,10 +157,8 @@ public class EmployeeEditor extends VerticalLayout implements KeyNotifier {
     }
 
     private void setEmployee(EmployeeDto employeeDto) {
-        try {
-            employee = employeeService.getEmployeeByLogin(employeeDto.getLogin());
-        } catch (EntityNotFoundException exc) {
-            employee = employeeDto;
-        }
+        this.employee = Objects.requireNonNullElse(
+            employeeService.getEmployeeById(employeeDto.getId()),
+            employeeDto);
     }
 }

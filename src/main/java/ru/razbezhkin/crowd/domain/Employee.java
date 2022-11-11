@@ -21,7 +21,4 @@ public class Employee {
     private String lastname;
     private String email;
     private String phoneNumber;
-
-    public void ifPresent(Object delete) {
-    }
 }
